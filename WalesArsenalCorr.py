@@ -4,9 +4,7 @@ Created on Sun Mar 11 18:58:48 2018
 
 @author: George
 
-Match whether Arsenal and Wales both played on a certain weekend (Friday,
-Saturday, Sunday, Monday).
-
+Look at the correlation of Arsenal and Wales results.
 
 """
 
@@ -19,7 +17,8 @@ os.chdir('C:\\Users\\George\\OneDrive - University Of Cambridge\\Others\\Machine
 walesData = pd.read_csv('WalesData.csv')
 walesData['Date'] = pd.to_datetime(walesData['Date'])
 walesData = walesData.drop('Match report', axis=1)
-dateFrom = 2015
+dateFrom = 2013
+startWeekday = 4
 
 arsenalData = pd.read_csv('ArsenalData.csv')
 arsenalData['date'] = pd.to_datetime(arsenalData['date'], format='%d/%m/%Y')
@@ -28,7 +27,7 @@ arsenalData['date'] = pd.to_datetime(arsenalData['date'], format='%d/%m/%Y')
 walesData.fillna(method='ffill', inplace=True) # Only the first value of competition name is present
 walesData = walesData[walesData['Score'] != '\xa0? –\xa0?'] # Remove matches that haven't happened yet
 walesData = walesData[walesData['Date'].dt.year >= dateFrom]
-walesData = walesData[walesData['Date'].dt.dayofweek>=4] # Keep only weekends
+walesData = walesData[walesData['Date'].dt.dayofweek >= startWeekday] # Keep only weekends
 
 
 def replaceCompetitions(comp):
@@ -79,7 +78,7 @@ walesResults = walesData[['Date', 'weekHash', 'walesWin']]
 arsenalData.dropna(axis=1, inplace=True, how='all')
 arsenalData.dropna(axis=0, inplace=True)
 arsenalData = arsenalData[arsenalData['date'].dt.year >= dateFrom]
-arsenalData = arsenalData[arsenalData['date'].dt.dayofweek>=4] # Keep only weekends
+arsenalData = arsenalData[arsenalData['date'].dt.dayofweek >= startWeekday] # Keep only weekends
 
 arsenalData = arsenalData[arsenalData.Results.str[0].str.isnumeric()]
 
@@ -128,5 +127,5 @@ def absoluteCounts(merged, dateFrom):
 
 absoluteCounts(mergedResults, dateFrom)
 
-print('The Pearson R value is {:.2f} and the p-value is {:.2f}'.format(
+print('The Pearson R value is {:.4f} and the p-value is {:.4f}'.format(
         corrs[0], corrs[1]))
