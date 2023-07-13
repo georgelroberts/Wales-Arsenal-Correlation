@@ -53,19 +53,17 @@ def walesResults(dat):
     """
     dat = dat.lower()
     if 'draw' in dat:
-        res = 2
+        return 2
     elif 'wales' in dat:
-        res = 1
+        return 1
     else:
-        res = 0
-    return res
+        return 0
 walesData['walesWin'] = walesData['Winner'].apply(walesResults)
 
 def dateTimetoWeekend(dateList, startYear):
     """ Remove Monday-Thursday and then hash each weekend so that each
     year will have a separate value """
-    weekHash = dateList.dt.week + 52 * (dateList.dt.year - startYear)
-    return weekHash
+    return dateList.dt.week + 52 * (dateList.dt.year - startYear)
 
 walesData['weekHash'] = dateTimetoWeekend(walesData['Date'], dateFrom)
 
@@ -88,12 +86,11 @@ def arsenalResults(dat):
     arsScore = int(dat[0])
     othScore = int(dat[2])
     if arsScore > othScore:
-        res = 1
+        return 1
     elif arsScore == othScore:
-        res = 2
+        return 2
     else:
-        res = 0
-    return res
+        return 0
 
 arsenalData['Winner'] = arsenalData['Results'].apply(arsenalResults)
 
@@ -119,10 +116,18 @@ def absoluteCounts(merged, dateFrom):
     togetherW = same.walesWin.value_counts().loc[1]
     togetherL = together - togetherW
 
-    print('Arsenal and Wales have played {}'.format(totalGames) +
-          ' games on the same weekend since {}.'.format(dateFrom))
-    print('Of these games, they have had the same result {}'.format(together) +
-          ' times, with {} wins and {} losses'.format(togetherW, togetherL))
+    print(
+        (
+            f'Arsenal and Wales have played {totalGames}'
+            + f' games on the same weekend since {dateFrom}.'
+        )
+    )
+    print(
+        (
+            f'Of these games, they have had the same result {together}'
+            + f' times, with {togetherW} wins and {togetherL} losses'
+        )
+    )
 
 
 absoluteCounts(mergedResults, dateFrom)
